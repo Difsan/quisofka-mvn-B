@@ -1,7 +1,7 @@
 package co.com.quisofka.quizzes.domain.usecase.quiz.getAllQuizzes;
 
-import com.quisofka.quizzes.domain.model.quiz.Quiz;
-import com.quisofka.quizzes.domain.model.quiz.gateways.QuizRepositoryGateway;
+import co.com.quisofka.quizzes.domain.model.quiz.Quiz;
+import co.com.quisofka.quizzes.domain.model.quiz.gateways.QuizRepositoryGateway;
 import lombok.RequiredArgsConstructor;
 import reactor.core.publisher.Flux;
 

@@ -1,7 +1,6 @@
 package co.com.quisofka.quizzes.domain.model.quiz.gateways;
 
-
-import com.quisofka.quizzes.domain.model.quiz.Quiz;
+import co.com.quisofka.quizzes.domain.model.quiz.Quiz;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
