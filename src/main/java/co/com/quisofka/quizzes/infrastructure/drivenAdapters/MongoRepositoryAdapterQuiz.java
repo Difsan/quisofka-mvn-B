@@ -7,6 +7,7 @@ import co.com.quisofka.quizzes.domain.model.quiz.enums.Level;
 import co.com.quisofka.quizzes.domain.model.quiz.enums.Status;
 import co.com.quisofka.quizzes.domain.model.quiz.gateways.QuizRepositoryGateway;
 import co.com.quisofka.quizzes.infrastructure.drivenAdapters.data.QuizData;
+import co.com.quisofka.quizzes.infrastructure.drivenAdapters.util.customCode.CustomUUID;
 import lombok.RequiredArgsConstructor;
 import org.reactivecommons.utils.ObjectMapper;
 import org.springframework.stereotype.Repository;
@@ -65,6 +66,7 @@ public class MongoRepositoryAdapterQuiz implements QuizRepositoryGateway {
                     Map<String, Boolean> quizQuestions=questionList.stream()
                             .collect(Collectors.toMap(Question::getId, q -> false));
                     Quiz newQuiz=Quiz.builder()
+                            .id(CustomUUID.customUUIDGenerator())
                             .questionList(questionList)
                             .questions(quizQuestions)
                             .studentId(quiz.getStudentId())
@@ -92,6 +94,7 @@ public class MongoRepositoryAdapterQuiz implements QuizRepositoryGateway {
                     Map<String, Boolean> quizQuestions=questionList.stream()
                             .collect(Collectors.toMap(Question::getId, q -> false));
                     Quiz newQuiz=Quiz.builder()
+                            .id(CustomUUID.customUUIDGenerator())
                             .questionList(questionList)
                             .questions(quizQuestions)
                             .studentId(quiz.getStudentId())
@@ -118,6 +121,7 @@ public class MongoRepositoryAdapterQuiz implements QuizRepositoryGateway {
                     Map<String, Boolean> quizQuestions=questionList.stream()
                             .collect(Collectors.toMap(Question::getId, q -> false));
                     Quiz newQuiz=Quiz.builder()
+                            .id(CustomUUID.customUUIDGenerator())
                             .questionList(questionList)
                             .questions(quizQuestions)
                             .studentId(quiz.getStudentId())
