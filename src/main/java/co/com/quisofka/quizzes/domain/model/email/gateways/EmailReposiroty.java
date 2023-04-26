@@ -5,5 +5,5 @@ import reactor.core.publisher.Mono;
 
 public interface EmailReposiroty {
     Mono<Void> sendQuizCodeByEmail(Email email, String quizCode);
-    Mono<Void> sendStudentResultByEmail(Email email);
+    Mono<Void> sendStudentResultByEmail(Email email, String quizResult);
 }

@@ -51,7 +51,7 @@ public class AdapterEmail implements EmailReposiroty {
                 MimeMessageHelper helper = new MimeMessageHelper(message, true);
                 helper.setFrom("quissofka@gmail.com");
                 helper.setTo(email.getTo());
-                helper.setSubject("Code Generated");
+                helper.setSubject("Código generado para quiz");
                 helper.setText(htmlBody, true);
 
                 mailSender.send(message);
@@ -62,7 +62,36 @@ public class AdapterEmail implements EmailReposiroty {
     }
 
     @Override
-    public Mono<Void> sendStudentResultByEmail(Email email) {
-        return null;
+    public Mono<Void> sendStudentResultByEmail(Email email, String quizResult) {
+
+        return Mono.fromRunnable(() -> {
+            try {
+                // Load the HTML template from the classpath
+                System.out.println("entrando a sendHtmlEmail");
+                Resource resource = new ClassPathResource("templates/resultSentEmail-Template.html");
+                System.out.println("guardando resource");
+                System.out.println(resource);
+                byte[] contentBytes = FileCopyUtils.copyToByteArray(resource.getInputStream());
+                String htmlBody = new String(contentBytes, "UTF-8");
+                System.out.println("imprimiendo htmlBody");
+                System.out.println(htmlBody);
+
+                // Replace placeholders in the HTML template with dynamic values
+                htmlBody = htmlBody.replace("[[name]]", email.getStudentName());
+                htmlBody = htmlBody.replace("[[quizResult]]", quizResult);
+
+                MimeMessage message = mailSender.createMimeMessage();
+
+                MimeMessageHelper helper = new MimeMessageHelper(message, true);
+                helper.setFrom("quissofka@gmail.com");
+                helper.setTo(email.getTo());
+                helper.setSubject("Resultado de la prueba");
+                helper.setText(htmlBody, true);
+
+                mailSender.send(message);
+            } catch (Exception ex) {
+                throw new RuntimeException( ex);
+            }
+        });
     }
 }
