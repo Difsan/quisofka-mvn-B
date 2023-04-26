@@ -15,6 +15,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Map;
@@ -136,8 +137,45 @@ public class MongoRepositoryAdapterQuiz implements QuizRepositoryGateway {
     }
 
     @Override
+    public Mono<Quiz> startQuiz(String id) {
+        return this.quizRepository.findById(id)
+                .switchIfEmpty(Mono.error(new IllegalArgumentException("There is not " +
+                        "quiz with id: " + id)))
+                .map(quiz -> mapper.map(quiz, Quiz.class))
+                .filter(quiz -> {
+                    LocalDateTime createdAt=quiz.getCreatedAt();
+                    LocalDateTime now=LocalDateTime.now();
+                    Duration duration=Duration.between(createdAt, now);
+                    return duration.toHours() < 24;
+                })
+                .switchIfEmpty(
+                        Mono.error(
+                                new IllegalArgumentException(
+                                        "Quiz with id "
+                                                + id +
+                                                " was created more than 24 hours ago and cannot be modified." +
+                                                "please ask for another code"))
+                )
+                .filter(quiz -> !quiz.getStatus().equalsIgnoreCase(Status.STARTED.name()) )
+                .switchIfEmpty(
+                        Mono.error(
+                                new IllegalArgumentException(
+                                        "Quiz with id "
+                                         + id +
+                                         " has already been started"))
+                        )
+                .flatMap(quiz1 -> {
+                    quiz1.setStartedAt(LocalDateTime.now());
+                    quiz1.setStatus(Status.STARTED.name());
+                    return this.quizRepository.save(mapper.map(quiz1, QuizData.class));
+                })
+                .map(quiz2 -> mapper.map(quiz2, Quiz.class));
+    }
+
+    @Override
     public Mono<Void> deleteAll() {
         return this.quizRepository.deleteAll()
                 .onErrorResume(Mono::error);
     }
+
 }
