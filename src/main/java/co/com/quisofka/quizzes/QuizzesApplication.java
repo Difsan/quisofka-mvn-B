@@ -9,13 +9,10 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 @OpenAPIDefinition(
 		info = @Info(
-				title = "Apprentice Radar API",
+				title = "Quisofka",
 				version = "1.0.0",
-				description = "API created for the agile challenge at SofkaU Bilingual Training League"
-		),      servers = {
-		@Server(url = "https://quisofka-mvn-b-production.up.railway.app")
-		//@Server(url = "url del servidor de produccion")
-})
+				description = "API created to creates quizzes for student at SofkaU Bilingual"
+		))
 public class QuizzesApplication {
 
 	public static void main(String[] args) {
