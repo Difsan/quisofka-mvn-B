@@ -1,6 +1,7 @@
 package co.com.quisofka.quizzes.infrastructure.entryPoints;
 
 import co.com.quisofka.quizzes.domain.model.quiz.Quiz;
+import co.com.quisofka.quizzes.domain.usecase.quiz.StartQuiz.StartQuizUseCase;
 import co.com.quisofka.quizzes.domain.usecase.quiz.createFirstLvlQuiz.CreateFirstLvlQuizUseCase;
 import co.com.quisofka.quizzes.domain.usecase.quiz.createQuiz.CreateQuizUseCase;
 import co.com.quisofka.quizzes.domain.usecase.quiz.createSecondLvlQuiz.CreateSecondLvlQuizUseCase;
@@ -49,13 +50,13 @@ public class RouterRestQuiz {
 
 
     @Bean
-    public RouterFunction<ServerResponse> getQuestionById(GetQuizByIdUseCase getQuizByIdUseCase){
+    public RouterFunction<ServerResponse> getQuizById(GetQuizByIdUseCase getQuizByIdUseCase){
         return route(GET("/quisofka/quizzes/quizzes/{id}"),
                 request -> getQuizByIdUseCase.apply(request.pathVariable("id"))
                         .switchIfEmpty(Mono.error(new Throwable(HttpStatus.NO_CONTENT.toString())))
-                        .flatMap(question -> ServerResponse.status(200)
+                        .flatMap(quiz -> ServerResponse.status(200)
                                 .contentType(MediaType.APPLICATION_JSON)
-                                .bodyValue(question))
+                                .bodyValue(quiz))
                         .onErrorResume(throwable -> ServerResponse.notFound().build()));
     }
 
@@ -129,6 +130,18 @@ public class RouterRestQuiz {
                                         .contentType(MediaType.APPLICATION_JSON)
                                         .bodyValue(result))
                                 .onErrorResume(throwable -> ServerResponse.status(HttpStatus.NOT_ACCEPTABLE).bodyValue(throwable.getMessage()))));
+    }
+
+
+    @Bean
+    public RouterFunction<ServerResponse> startQuiz(StartQuizUseCase startQuizUseCase){
+        return route(PATCH("/quisofka/quizzes/quizzes/start/{id}"),
+                request -> startQuizUseCase.apply(request.pathVariable("id"))
+                        .switchIfEmpty(Mono.error(new Throwable(HttpStatus.NO_CONTENT.toString())))
+                        .flatMap(quiz -> ServerResponse.status(200)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .bodyValue(quiz))
+                        .onErrorResume(throwable -> ServerResponse.notFound().build()));
     }
 
 
