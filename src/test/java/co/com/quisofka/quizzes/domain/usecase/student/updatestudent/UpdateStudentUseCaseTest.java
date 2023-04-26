@@ -1,4 +1,4 @@
-package co.com.quisofka.quizzes.student.updatestudent;
+package co.com.quisofka.quizzes.domain.usecase.student.updatestudent;
 
 
 import co.com.quisofka.quizzes.domain.model.student.Student;
