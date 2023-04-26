@@ -1,8 +1,7 @@
-package co.com.quisofka.quizzes.student.deletestudent;
+package co.com.quisofka.quizzes.domain.usecase.student.deletestudent;
 
 import co.com.quisofka.quizzes.domain.model.student.Student;
 import co.com.quisofka.quizzes.domain.model.student.gateways.StudentRepository;
-import co.com.quisofka.quizzes.domain.usecase.student.deletestudent.DeleteStudentUseCase;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -12,6 +11,8 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(MockitoExtension.class)
 class DeleteStudentUseCaseTest {

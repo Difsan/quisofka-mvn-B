@@ -1,4 +1,4 @@
-package co.com.quisofka.quizzes.student.savestudent;
+package co.com.quisofka.quizzes.domain.usecase.student.savestudent;
 
 import co.com.quisofka.quizzes.domain.model.student.Student;
 import co.com.quisofka.quizzes.domain.model.student.gateways.StudentRepository;

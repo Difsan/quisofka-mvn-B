@@ -1,8 +1,8 @@
-package co.com.quisofka.quizzes.student.getstudentbyid;
+package co.com.quisofka.quizzes.domain.usecase.student.getstudentbyemail;
 
 import co.com.quisofka.quizzes.domain.model.student.Student;
 import co.com.quisofka.quizzes.domain.model.student.gateways.StudentRepository;
-import co.com.quisofka.quizzes.domain.usecase.student.getstudentbyid.GetStudentByIdUseCase;
+import co.com.quisofka.quizzes.domain.usecase.student.getstudentbyemail.GetStudentByEmailUseCase;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -14,55 +14,52 @@ import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
 @ExtendWith(MockitoExtension.class)
-class GetStudentByIdUseCaseTest {
+class GetStudentByEmailUseCaseTest {
 
     @Mock
     StudentRepository repository;
 
-    GetStudentByIdUseCase useCase;
+    GetStudentByEmailUseCase useCase;
 
     @BeforeEach
     void setUp() {
-        useCase = new GetStudentByIdUseCase(repository);
+        useCase = new GetStudentByEmailUseCase(repository);
     }
 
     @Test
-    @DisplayName("GetStudentByIdUseCase_Success")
-    void getStudentById(){
+    @DisplayName("GetStudentByEmailUseCase_Success")
+    void getStudentByEmail(){
         var student = new Student("1", "Diego", "Sanchez",
                 "di@gmail.com",true,"initial");
 
-        Mockito.when(repository.getStudentById("1")).thenReturn(Mono.just(student));
+        Mockito.when(repository.getStudentByEmail("di@gmail.com")).thenReturn(Mono.just(student));
 
-        var result = useCase.apply("1");
+        var result = useCase.apply("di@gmail.com");
 
         StepVerifier.create(result)
                 .expectNext(student)
                 .expectComplete()
                 .verify();
 
-        Mockito.verify(repository, Mockito.times(1)).getStudentById("1");
+        Mockito.verify(repository, Mockito.times(1)).getStudentByEmail("di@gmail.com");
     }
 
     @Test
-    @DisplayName("GetStudentByIdUseCase_Failed")
-    void getStudentById_Failed() {
-
-        String studentId = "1";
-
-        Mockito.when(repository.getStudentById(studentId))
+    @DisplayName("GetStudentByEmailUseCase_Failed")
+    void getStudentByEmail_Failed() {
+        String studentEmail= "di@gmail.com";
+        Mockito.when(repository.getStudentByEmail(studentEmail))
                 .thenReturn(Mono.error(new IllegalArgumentException("There is not " +
-                        "student with id: " + studentId)));
+                        "student with id: " + studentEmail)));
 
-        var result = useCase.apply(studentId);
+        var result = useCase.apply(studentEmail);
 
         StepVerifier.create(result)
                 .expectErrorMessage("There is not " +
-                        "student with id: " + studentId)
+                        "student with id: " + studentEmail)
                 .verify();
 
         Mockito.verify(repository, Mockito.times(1))
-                .getStudentById(studentId);
+                .getStudentByEmail(studentEmail);
     }
-
 }
