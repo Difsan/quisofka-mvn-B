@@ -20,6 +20,7 @@ import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Repository
 @RequiredArgsConstructor
@@ -170,6 +171,35 @@ public class MongoRepositoryAdapterQuiz implements QuizRepositoryGateway {
                     return this.quizRepository.save(mapper.map(quiz1, QuizData.class));
                 })
                 .map(quiz2 -> mapper.map(quiz2, Quiz.class));
+    }
+
+    @Override
+    public Mono<Quiz> submitQuiz(String id, Quiz quiz) {
+        return this.quizRepository
+                .findById(id)
+                .switchIfEmpty(Mono.error(new IllegalArgumentException("There is not " +
+                        "quiz with id: " + id)))
+                .flatMap(quizData -> {
+                    quiz.setId(quizData.getId());
+                   Double newResult = quiz.getQuestions().entrySet()
+                           .stream()
+                           .mapToDouble(entry -> entry.getValue() ? 2 : 0)
+                           .sum();
+                   quiz.setScore(newResult);
+                   quiz.setStatus(Status.FINISHED.name());
+                   return quizRepository.save(mapper.map(quiz, QuizData.class));
+
+                })
+                .map(quizData -> mapper.map(quizData, Quiz.class));
+    }
+
+    @Override
+    public Mono<Void> deleteQuizById(String id) {
+        return this.quizRepository
+                .findById(id)
+                .switchIfEmpty(Mono.error(new IllegalArgumentException("There is not " +
+                        "quiz with id: " + id)))
+                .flatMap(studentData -> this.quizRepository.deleteById(studentData.getId()));
     }
 
     @Override

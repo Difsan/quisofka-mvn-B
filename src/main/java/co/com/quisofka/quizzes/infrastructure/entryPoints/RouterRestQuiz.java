@@ -1,14 +1,17 @@
 package co.com.quisofka.quizzes.infrastructure.entryPoints;
 
 import co.com.quisofka.quizzes.domain.model.quiz.Quiz;
+import co.com.quisofka.quizzes.domain.model.student.Student;
 import co.com.quisofka.quizzes.domain.usecase.quiz.StartQuiz.StartQuizUseCase;
 import co.com.quisofka.quizzes.domain.usecase.quiz.createFirstLvlQuiz.CreateFirstLvlQuizUseCase;
 import co.com.quisofka.quizzes.domain.usecase.quiz.createQuiz.CreateQuizUseCase;
 import co.com.quisofka.quizzes.domain.usecase.quiz.createSecondLvlQuiz.CreateSecondLvlQuizUseCase;
 import co.com.quisofka.quizzes.domain.usecase.quiz.createThirdLvlQuiz.CreateThirdvlQuizUseCase;
 import co.com.quisofka.quizzes.domain.usecase.quiz.deleteAll.DeleteAllQuizzesUseCase;
+import co.com.quisofka.quizzes.domain.usecase.quiz.deletebyid.DeleteQuizByIdUseCase;
 import co.com.quisofka.quizzes.domain.usecase.quiz.getAllQuizzes.GetAllQuizzesUseCase;
 import co.com.quisofka.quizzes.domain.usecase.quiz.getQuizById.GetQuizByIdUseCase;
+import co.com.quisofka.quizzes.domain.usecase.student.deletestudent.DeleteStudentUseCase;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
@@ -143,6 +146,32 @@ public class RouterRestQuiz {
                                 .bodyValue(quiz))
                         .onErrorResume(throwable -> ServerResponse.notFound().build()));
     }
+
+
+
+    @Bean
+    @RouterOperation(path = "/quisofka/quizzes/{id}", produces = {
+            MediaType.APPLICATION_JSON_VALUE},
+            beanClass = DeleteQuizByIdUseCase.class, method = RequestMethod.DELETE,
+            beanMethod = "apply",
+            operation = @Operation(operationId = "deleteQuizById", tags = "Quiz usecases",
+                    parameters = {@Parameter(name = "id", description = "quiz Id", required= true, in = ParameterIn.PATH)},
+                    responses = {
+                            @ApiResponse(responseCode = "200", description = "Success",
+                                    content = @Content (schema = @Schema(implementation = Quiz.class))),
+                            @ApiResponse(responseCode = "404", description = "Not Found")
+                    }))
+    public RouterFunction<ServerResponse> deleteQuiz (DeleteQuizByIdUseCase deleteQuizByIdUseCase){
+        return route(DELETE("/quisofka/quizzes/{id}"),
+                request -> deleteQuizByIdUseCase.apply(request.pathVariable("id"))
+                        .thenReturn(ServerResponse.ok()
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .bodyValue(Collections.singletonMap("message", "Quiz deleted")))
+                        .flatMap(serverResponseMono -> serverResponseMono)
+                        .onErrorResume(throwable -> ServerResponse.status(HttpStatus.NOT_FOUND).bodyValue(throwable.getMessage()))
+        );
+    }
+
 
 
     @Bean

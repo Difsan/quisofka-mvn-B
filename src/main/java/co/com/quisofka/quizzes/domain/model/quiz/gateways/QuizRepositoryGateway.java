@@ -15,4 +15,6 @@ public interface QuizRepositoryGateway {
     Mono<Quiz> createThirdLvlQuiz(Quiz quiz);
     Mono<Void> deleteAll();
     Mono<Quiz> startQuiz(String id);
+    Mono<Quiz> submitQuiz(String id, Quiz quiz);
+    Mono<Void> deleteQuizById(String id);
 }
