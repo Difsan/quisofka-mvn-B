@@ -4,6 +4,7 @@ import co.com.quisofka.quizzes.domain.model.email.Email;
 import co.com.quisofka.quizzes.domain.model.email.gateways.EmailReposiroty;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.mail.MailProperties;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
@@ -18,8 +19,13 @@ import reactor.core.publisher.Mono;
 @RequiredArgsConstructor
 public class AdapterEmail implements EmailReposiroty {
 
+    @Autowired
     private JavaMailSender mailSender;
+
+    @Autowired
     private MailProperties mailProperties;
+
+    @Autowired
     private ResourceLoader resourceLoader;
 
     @Override
@@ -28,7 +34,7 @@ public class AdapterEmail implements EmailReposiroty {
             try {
                 // Load the HTML template from the classpath
                 System.out.println("entrando a sendHtmlEmail");
-                Resource resource = new ClassPathResource("src/main/java/co/com/quisofka/quizzes/infrastructure/drivenAdapters/util/template/codeSentEmail-Template.html");
+                Resource resource = new ClassPathResource("templates/codeSentEmail-Template.html");
                 System.out.println("guardando resource");
                 System.out.println(resource);
                 byte[] contentBytes = FileCopyUtils.copyToByteArray(resource.getInputStream());
@@ -38,13 +44,14 @@ public class AdapterEmail implements EmailReposiroty {
 
                 // Replace placeholders in the HTML template with dynamic values
                 htmlBody = htmlBody.replace("[[name]]", email.getStudentName());
+                htmlBody = htmlBody.replace("[[quizCode]]", quizCode);
 
                 MimeMessage message = mailSender.createMimeMessage();
 
                 MimeMessageHelper helper = new MimeMessageHelper(message, true);
                 helper.setFrom("quissofka@gmail.com");
                 helper.setTo(email.getTo());
-                helper.setSubject(email.getMessageSubject());
+                helper.setSubject("Code Generated");
                 helper.setText(htmlBody, true);
 
                 mailSender.send(message);

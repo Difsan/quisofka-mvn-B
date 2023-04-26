@@ -20,6 +20,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.reactive.function.server.RouterFunction;
 import org.springframework.web.reactive.function.server.ServerResponse;
 
+import java.util.Collections;
+
 import static org.springframework.web.reactive.function.server.RequestPredicates.*;
 import static org.springframework.web.reactive.function.server.RouterFunctions.route;
 
@@ -27,7 +29,7 @@ import static org.springframework.web.reactive.function.server.RouterFunctions.r
 public class RouterRestEmail {
 
     @Bean
-    @RouterOperation(path = "/quisofka/quizzes/emails/{quizCode}", produces = {
+    @RouterOperation(path = "/quisofka/quizzes/emails/generatedCode/{quizCode}", produces = {
             MediaType.APPLICATION_JSON_VALUE},
             beanClass = SendQuizCodeByEmailUseCase.class, method = RequestMethod.POST,
             beanMethod = "apply",
@@ -44,12 +46,13 @@ public class RouterRestEmail {
                             content = @Content(schema = @Schema(implementation = Email.class)))
             ))
     public RouterFunction<ServerResponse> sendCodeByEmail (SendQuizCodeByEmailUseCase codeByEmailUseCase){
-        return route(POST("/quisofka/quizzes/emails/{quizCode}").and(accept(MediaType.APPLICATION_JSON)),
+        return route(POST("/quisofka/quizzes/emails/generatedCode/{quizCode}").and(accept(MediaType.APPLICATION_JSON)),
                 request -> request.bodyToMono(Email.class)
                         .flatMap(email -> codeByEmailUseCase.apply(email,request.pathVariable("quizCode"))
-                                .flatMap(result -> ServerResponse.status(201)
+                                .thenReturn(ServerResponse.ok()
                                         .contentType(MediaType.APPLICATION_JSON)
-                                        .bodyValue(result))
+                                        .bodyValue(Collections.singletonMap("message","email sent")))
+                                .flatMap(serverResponseMono -> serverResponseMono)
                                 .onErrorResume(throwable -> ServerResponse.status(HttpStatus.BAD_REQUEST)
                                         .bodyValue(throwable.getMessage()))
                         )

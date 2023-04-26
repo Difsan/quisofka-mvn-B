@@ -10,6 +10,6 @@ import lombok.*;
 public class Email {
 
     String to;
-    String messageSubject;
+    //String messageSubject;
     String studentName;
 }
