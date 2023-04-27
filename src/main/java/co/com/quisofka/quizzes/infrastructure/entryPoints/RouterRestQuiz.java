@@ -11,7 +11,9 @@ import co.com.quisofka.quizzes.domain.usecase.quiz.deleteAll.DeleteAllQuizzesUse
 import co.com.quisofka.quizzes.domain.usecase.quiz.deletebyid.DeleteQuizByIdUseCase;
 import co.com.quisofka.quizzes.domain.usecase.quiz.getAllQuizzes.GetAllQuizzesUseCase;
 import co.com.quisofka.quizzes.domain.usecase.quiz.getQuizById.GetQuizByIdUseCase;
+import co.com.quisofka.quizzes.domain.usecase.quiz.submitquiz.SubmitQuizUseCase;
 import co.com.quisofka.quizzes.domain.usecase.student.deletestudent.DeleteStudentUseCase;
+import co.com.quisofka.quizzes.domain.usecase.student.updatestudent.UpdateStudentUseCase;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
@@ -147,7 +149,36 @@ public class RouterRestQuiz {
                         .onErrorResume(throwable -> ServerResponse.notFound().build()));
     }
 
-
+    @Bean
+    @RouterOperation(path = "/quisofka/quizzes/quizzes/{id}", produces = {
+            MediaType.APPLICATION_JSON_VALUE},
+            beanClass = SubmitQuizUseCase.class, method = RequestMethod.PATCH,
+            beanMethod = "apply",
+            operation = @Operation(operationId = "submitQuiz", tags = "Quiz usecases",
+                    parameters = {@Parameter(name = "id", description = "quiz Id", required= true, in = ParameterIn.PATH),
+                            @Parameter(name = "quiz", in = ParameterIn.PATH,
+                                    schema = @Schema(implementation = Student.class))},
+                    responses = {
+                            @ApiResponse(responseCode = "201", description = "Success",
+                                    content = @Content (schema = @Schema(implementation = Quiz.class))),
+                            @ApiResponse(responseCode = "406", description = "Not acceptable, Try again")
+                    },
+                    requestBody = @RequestBody(required = true, description = "Submit a quiz following the schema",
+                            content = @Content(schema = @Schema(implementation = Quiz.class)))
+            ))
+    public RouterFunction<ServerResponse> submitQuiz (SubmitQuizUseCase submitQuizUseCase){
+        return route(PATCH("/quisofka/quizzes/quizzes/{id}").and(accept(MediaType.APPLICATION_JSON)),
+                request -> request.bodyToMono(Quiz.class)
+                        .flatMap(quiz -> submitQuizUseCase.apply(request.pathVariable("id"),
+                                        quiz)
+                                .flatMap(result -> ServerResponse.status(201)
+                                        .contentType(MediaType.APPLICATION_JSON)
+                                        .bodyValue(result))
+                                .onErrorResume(throwable -> ServerResponse.status(HttpStatus.BAD_REQUEST)
+                                        .bodyValue(throwable.getMessage()))
+                        )
+        );
+    }
 
     @Bean
     @RouterOperation(path = "/quisofka/quizzes/{id}", produces = {
