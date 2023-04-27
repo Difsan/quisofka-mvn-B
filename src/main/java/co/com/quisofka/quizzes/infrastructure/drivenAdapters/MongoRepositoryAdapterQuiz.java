@@ -17,7 +17,9 @@ import reactor.core.publisher.Mono;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -90,8 +92,11 @@ public class MongoRepositoryAdapterQuiz implements QuizRepositoryGateway {
                 .collectList()
                 .flatMap(questions -> {
                     HashSet<Question> questionList=new HashSet<>(questions);
-                    Map<String, Boolean> quizQuestions=questionList.stream()
-                            .collect(Collectors.toMap(Question::getId, q -> false));
+                    List<List<Object>> quizQuestions = questionList.stream()
+                            .map(question -> Arrays.asList((Object) question.getId(), false))
+                            .collect(Collectors.toList());
+                    /*Map<String, Boolean> quizQuestions=questionList.stream()
+                            .collect(Collectors.toMap(Question::getId, q -> false));*/
                     Quiz newQuiz=Quiz.builder()
                             .id(CustomUUID.customUUIDGenerator())
                             .questionList(questionList)
@@ -121,14 +126,18 @@ public class MongoRepositoryAdapterQuiz implements QuizRepositoryGateway {
                 .collectList()
                 .flatMap(questions -> {
                     HashSet<Question> questionList=new HashSet<>(questions);
-                    Map<String, Boolean> quizQuestions=questionList.stream()
-                            .collect(Collectors.toMap(Question::getId, q -> false));
+                    List<List<Object>> quizQuestions = questionList.stream()
+                            .map(question -> Arrays.asList((Object) question.getId(), false))
+                            .collect(Collectors.toList());
                     Quiz newQuiz=Quiz.builder()
                             .id(CustomUUID.customUUIDGenerator())
                             .questionList(questionList)
                             .questions(quizQuestions)
                             .studentId(quiz.getStudentId())
                             .createdAt(LocalDateTime.now())
+                            //the next two lines are just to prove the thing of one hour
+                            //.startedAt(LocalDateTime.now().minusHours(2))
+                            //.startedAt(LocalDateTime.now())
                             .status(Status.GENERATED.name())
                             .level(Level.BASIC.name())
                             .build();
@@ -148,14 +157,18 @@ public class MongoRepositoryAdapterQuiz implements QuizRepositoryGateway {
                 .collectList()
                 .flatMap(questions -> {
                     HashSet<Question> questionList=new HashSet<>(questions);
-                    Map<String, Boolean> quizQuestions=questionList.stream()
-                            .collect(Collectors.toMap(Question::getId, q -> false));
+                    List<List<Object>> quizQuestions = questionList.stream()
+                            .map(question -> Arrays.asList((Object) question.getId(), false))
+                            .collect(Collectors.toList());
                     Quiz newQuiz=Quiz.builder()
                             .id(CustomUUID.customUUIDGenerator())
                             .questionList(questionList)
                             .questions(quizQuestions)
                             .studentId(quiz.getStudentId())
                             .createdAt(LocalDateTime.now())
+                            //the next two lines are just to prove the thing of one hour
+                            //.startedAt(LocalDateTime.now().minusHours(2))
+                            //.startedAt(LocalDateTime.now())
                             .status(Status.GENERATED.name())
                             .level(Level.INTERMEDIATE.name())
                             .build();
@@ -208,22 +221,27 @@ public class MongoRepositoryAdapterQuiz implements QuizRepositoryGateway {
                 .switchIfEmpty(Mono.error(new IllegalArgumentException("There is not " +
                         "quiz with id: " + id)))
                 .flatMap(quizData -> {
-                    LocalDateTime now = LocalDateTime.now();
-                    Duration duration = Duration.between(quizData.getStartedAt(), now);
-                    long hours = duration.toHours();
-                    if (hours > 1){
-                        return this.quizRepository.deleteById(id)
-                                .then(Mono.error(new IllegalArgumentException("The quiz can no longer be submitted, " +
-                                        "you spend more than 1 hour on it.")));
-                    }else{
-                        quiz.setId(quizData.getId());
-                        Double newResult = quiz.getQuestions().entrySet()
-                                .stream()
-                                .mapToDouble(entry -> entry.getValue() ? 2 : 0)
-                                .sum();
-                        quiz.setScore(newResult);
-                        quiz.setStatus(Status.FINISHED.name());
-                        return quizRepository.save(mapper.map(quiz, QuizData.class));
+                    if (quizData.getStatus().equals("FINISHED")){
+                        return Mono.error(new IllegalArgumentException("The quiz can no longer be submitted, " +
+                                "it was already submitted"));
+                    }
+                    else {
+                        LocalDateTime now = LocalDateTime.now();
+                        Duration duration = Duration.between(quizData.getStartedAt(), now);
+                        long hours = duration.toHours();
+                        if (hours > 1){
+                            return this.quizRepository.deleteById(id)
+                                    .then(Mono.error(new IllegalArgumentException("The quiz can no longer be submitted, " +
+                                            "you spend more than 1 hour on it.")));
+                        }else{
+                            quiz.setId(quizData.getId());
+                            Double newResult = quiz.getQuestions().stream()
+                                    .mapToDouble(list -> (boolean)list.get(1) ? 2 : 0)
+                                    .sum();
+                            quiz.setScore(newResult);
+                            quiz.setStatus(Status.FINISHED.name());
+                            return quizRepository.save(mapper.map(quiz, QuizData.class));
+                        }
                     }
                 })
                 .map(quizData -> mapper.map(quizData, Quiz.class));

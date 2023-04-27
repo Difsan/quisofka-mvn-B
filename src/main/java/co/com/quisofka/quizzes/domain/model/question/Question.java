@@ -2,6 +2,7 @@ package co.com.quisofka.quizzes.domain.model.question;
 
 import lombok.*;
 
+import java.util.List;
 import java.util.Map;
 
 @Getter
@@ -13,7 +14,7 @@ public class Question {
 
     private String id;
     private String description;
-    private Map<String, Boolean> answers;
+    private List<List<Object>> answers;
     private String knowledgeArea;
     private String descriptor;
     //TODO: enums

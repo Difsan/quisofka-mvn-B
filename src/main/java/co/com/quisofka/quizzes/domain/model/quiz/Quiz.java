@@ -6,6 +6,7 @@ import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 
 @Getter
@@ -16,7 +17,7 @@ import java.util.Map;
 public class Quiz {
 
     private String id;
-    private Map<String, Boolean> questions;
+    private List<List<Object>> questions;
     private HashSet<Question> questionList;
     private Double score;
     private String studentId;

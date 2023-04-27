@@ -10,6 +10,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 
 @Data
@@ -19,7 +20,7 @@ import java.util.Map;
 public class QuizData {
 
     private String id;
-    private Map<String, Boolean> questions;
+    private List<List<Object>>  questions;
     private HashSet<Question> questionList;
     private Double score;
     @NotBlank(message="studentId is required")
