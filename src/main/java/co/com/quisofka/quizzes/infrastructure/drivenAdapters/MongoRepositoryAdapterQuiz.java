@@ -49,7 +49,32 @@ public class MongoRepositoryAdapterQuiz implements QuizRepositoryGateway {
 
     @Override
     public Mono<Quiz> createQuiz(Quiz quiz) {
-        return null;
+        return this.studentRepository
+                .findById(quiz.getStudentId())
+                .flatMap(studentData -> {
+                    if (!studentData.getIsAuthorized()){
+                        return Mono.error(new Throwable("Unauthorized student"));
+                    }
+                    if (studentData.getLevel().equalsIgnoreCase("INTERMEDIATE")){
+                        return Mono.error(new Throwable("Student is in the maximum level"));
+                    }
+
+                    if (studentData.getLevel().equalsIgnoreCase("PENDING")){
+                        return createFirstLvlQuiz(quiz);
+                    }
+
+                    if (studentData.getLevel().equalsIgnoreCase("INITIAL")){
+                        return createSecondLvlQuiz(quiz);
+                    }
+
+                    if (studentData.getLevel().equalsIgnoreCase("BASIC")){
+                        return createThirdLvlQuiz(quiz);
+                    }
+
+                    else {
+                        return createFirstLvlQuiz(quiz);
+                    }
+                });
     }
 
     //TODO: por ahora va sin restricciones, si hay tiempo unificamos para que haya restricciones
