@@ -13,6 +13,7 @@ import co.com.quisofka.quizzes.domain.usecase.quiz.getAllQuizzes.GetAllQuizzesUs
 import co.com.quisofka.quizzes.domain.usecase.quiz.getQuizById.GetQuizByIdUseCase;
 import co.com.quisofka.quizzes.domain.usecase.quiz.submitquiz.SubmitQuizUseCase;
 import co.com.quisofka.quizzes.domain.usecase.student.deletestudent.DeleteStudentUseCase;
+import co.com.quisofka.quizzes.domain.usecase.student.getstudentbyid.GetStudentByIdUseCase;
 import co.com.quisofka.quizzes.domain.usecase.student.updatestudent.UpdateStudentUseCase;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -55,6 +56,18 @@ public class RouterRestQuiz {
 
 
     @Bean
+    @RouterOperation(path = "/quisofka/quizzes/quizzes/{id}", produces = {
+            MediaType.APPLICATION_JSON_VALUE},
+            beanClass = GetQuizByIdUseCase.class,
+            method = RequestMethod.GET,
+            beanMethod = "apply",
+            operation = @Operation(operationId = "getQuizById", tags = "Quiz usecases",
+                    parameters = {@Parameter(name = "id", description = "quiz Id", required= true, in = ParameterIn.PATH)},
+                    responses = {
+                            @ApiResponse(responseCode = "200", description = "Success",
+                                    content = @Content(schema = @Schema(implementation = Quiz.class))),
+                            @ApiResponse(responseCode = "404", description = "Not Found")
+                    }))
     public RouterFunction<ServerResponse> getQuizById(GetQuizByIdUseCase getQuizByIdUseCase){
         return route(GET("/quisofka/quizzes/quizzes/{id}"),
                 request -> getQuizByIdUseCase.apply(request.pathVariable("id"))
@@ -139,6 +152,18 @@ public class RouterRestQuiz {
 
 
     @Bean
+    @RouterOperation(path = "/quisofka/quizzes/quizzes/start/{id}", produces = {
+            MediaType.APPLICATION_JSON_VALUE},
+            beanClass = StartQuizUseCase.class,
+            method = RequestMethod.PATCH,
+            beanMethod = "apply",
+            operation = @Operation(operationId = "startQuizById", tags = "Quiz usecases",
+                    parameters = {@Parameter(name = "id", description = "quiz Id", required= true, in = ParameterIn.PATH)},
+                    responses = {
+                            @ApiResponse(responseCode = "200", description = "Success",
+                                    content = @Content(schema = @Schema(implementation = Quiz.class))),
+                            @ApiResponse(responseCode = "404", description = "Not Found")
+                    }))
     public RouterFunction<ServerResponse> startQuiz(StartQuizUseCase startQuizUseCase){
         return route(PATCH("/quisofka/quizzes/quizzes/start/{id}"),
                 request -> startQuizUseCase.apply(request.pathVariable("id"))
@@ -150,7 +175,7 @@ public class RouterRestQuiz {
     }
 
     @Bean
-    @RouterOperation(path = "/quisofka/quizzes/quizzes/{id}", produces = {
+    @RouterOperation(path = "/quisofka/quizzes/quizzes/submit/{id}", produces = {
             MediaType.APPLICATION_JSON_VALUE},
             beanClass = SubmitQuizUseCase.class, method = RequestMethod.PATCH,
             beanMethod = "apply",
@@ -167,7 +192,7 @@ public class RouterRestQuiz {
                             content = @Content(schema = @Schema(implementation = Quiz.class)))
             ))
     public RouterFunction<ServerResponse> submitQuiz (SubmitQuizUseCase submitQuizUseCase){
-        return route(PATCH("/quisofka/quizzes/quizzes/{id}").and(accept(MediaType.APPLICATION_JSON)),
+        return route(PATCH("/quisofka/quizzes/quizzes/submit/{id}").and(accept(MediaType.APPLICATION_JSON)),
                 request -> request.bodyToMono(Quiz.class)
                         .flatMap(quiz -> submitQuizUseCase.apply(request.pathVariable("id"),
                                         quiz)
