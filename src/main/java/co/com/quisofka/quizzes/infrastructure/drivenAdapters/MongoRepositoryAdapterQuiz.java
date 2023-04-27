@@ -43,14 +43,39 @@ public class MongoRepositoryAdapterQuiz implements QuizRepositoryGateway {
     @Override
     public Mono<Quiz> getQuizById(String id) {
         return this.quizRepository.findById(id)
-                .switchIfEmpty(Mono.error(new IllegalArgumentException("There is not " +
+                .switchIfEmpty(Mono.error(new Throwable("There is not " +
                         "quiz with id: " + id)))
                 .map(quizData -> mapper.map(quizData, Quiz.class));
     }
 
     @Override
     public Mono<Quiz> createQuiz(Quiz quiz) {
-        return null;
+        return this.studentRepository
+                .findById(quiz.getStudentId())
+                .flatMap(studentData -> {
+                    if (!studentData.getIsAuthorized()){
+                        return Mono.error(new Throwable("Unauthorized student"));
+                    }
+                    if (studentData.getLevel().equalsIgnoreCase("INTERMEDIATE")){
+                        return Mono.error(new Throwable("Student is in the maximum level"));
+                    }
+
+                    if (studentData.getLevel().equalsIgnoreCase("PENDING")){
+                        return createFirstLvlQuiz(quiz);
+                    }
+
+                    if (studentData.getLevel().equalsIgnoreCase("INITIAL")){
+                        return createSecondLvlQuiz(quiz);
+                    }
+
+                    if (studentData.getLevel().equalsIgnoreCase("BASIC")){
+                        return createThirdLvlQuiz(quiz);
+                    }
+
+                    else {
+                        return createFirstLvlQuiz(quiz);
+                    }
+                });
     }
 
     //TODO: por ahora va sin restricciones, si hay tiempo unificamos para que haya restricciones
@@ -143,7 +168,7 @@ public class MongoRepositoryAdapterQuiz implements QuizRepositoryGateway {
     @Override
     public Mono<Quiz> startQuiz(String id) {
         return this.quizRepository.findById(id)
-                .switchIfEmpty(Mono.error(new IllegalArgumentException("There is not " +
+                .switchIfEmpty(Mono.error(new Throwable("There is not " +
                         "quiz with id: " + id)))
                 .map(quiz -> mapper.map(quiz, Quiz.class))
                 .filter(quiz -> {
@@ -154,7 +179,7 @@ public class MongoRepositoryAdapterQuiz implements QuizRepositoryGateway {
                 })
                 .switchIfEmpty(
                         Mono.error(
-                                new IllegalArgumentException(
+                                new Throwable (
                                         "Quiz with id "
                                                 + id +
                                                 " was created more than 24 hours ago and cannot be modified." +
@@ -163,7 +188,7 @@ public class MongoRepositoryAdapterQuiz implements QuizRepositoryGateway {
                 .filter(quiz -> !quiz.getStatus().equalsIgnoreCase(Status.STARTED.name()) )
                 .switchIfEmpty(
                         Mono.error(
-                                new IllegalArgumentException(
+                                new Throwable(
                                         "Quiz with id "
                                          + id +
                                          " has already been started"))
