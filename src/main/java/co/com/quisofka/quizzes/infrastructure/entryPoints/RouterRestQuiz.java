@@ -146,7 +146,7 @@ public class RouterRestQuiz {
                         .flatMap(quiz -> ServerResponse.status(200)
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .bodyValue(quiz))
-                        .onErrorResume(throwable -> new CustomException(HttpStatus.NOT_FOUND, NF_MESSAGE)ServerResponse.status(HttpStatus.NOT_ACCEPTABLE).bodyValue(throwable.getMessage())));
+                        .onErrorResume(throwable -> ServerResponse.status(HttpStatus.NOT_ACCEPTABLE).bodyValue(throwable.getMessage())));
     }
 
     @Bean
