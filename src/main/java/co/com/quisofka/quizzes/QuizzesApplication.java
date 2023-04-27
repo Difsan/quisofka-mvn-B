@@ -11,8 +11,11 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 		info = @Info(
 				title = "Quisofka",
 				version = "1.0.0",
-				description = "API created to creates quizzes for student at SofkaU Bilingual"
-		))
+				description = "Documentation created for Quisofka main API in charge of providing quizzes"
+		),
+		servers = {
+		@Server(url = "http://localhost:8080/"),
+		@Server(url = "https://quisofka-mvn-b-production.up.railway.app/")})
 public class QuizzesApplication {
 
 	public static void main(String[] args) {
