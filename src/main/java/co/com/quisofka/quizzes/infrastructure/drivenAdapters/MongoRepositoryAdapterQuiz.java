@@ -198,7 +198,7 @@ public class MongoRepositoryAdapterQuiz implements QuizRepositoryGateway {
                                                 " was created more than 24 hours ago and cannot be modified." +
                                                 "please ask for another code"))
                 )
-                .filter(quiz -> !quiz.getStatus().equalsIgnoreCase(Status.STARTED.name()) )
+                .filter(quiz -> !quiz.getStatus().equalsIgnoreCase(Status.STARTED.name()))
                 .switchIfEmpty(
                         Mono.error(
                                 new Throwable(
@@ -206,6 +206,14 @@ public class MongoRepositoryAdapterQuiz implements QuizRepositoryGateway {
                                          + id +
                                          " has already been started"))
                         )
+                .filter(quiz -> !quiz.getStatus().equalsIgnoreCase(Status.FINISHED.name()))
+                .switchIfEmpty(
+                        Mono.error(
+                                new Throwable(
+                                        "Quiz with id "
+                                                + id +
+                                                " has already been finished"))
+                )
                 .flatMap(quiz1 -> {
                     quiz1.setStartedAt(LocalDateTime.now());
                     quiz1.setStatus(Status.STARTED.name());
