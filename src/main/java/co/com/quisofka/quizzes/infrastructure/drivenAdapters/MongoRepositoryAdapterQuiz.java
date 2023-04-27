@@ -20,6 +20,7 @@ import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Repository
 @RequiredArgsConstructor
@@ -73,6 +74,9 @@ public class MongoRepositoryAdapterQuiz implements QuizRepositoryGateway {
                             .studentId(quiz.getStudentId())
                             .createdAt(LocalDateTime.now())
                             .status(Status.GENERATED.name())
+                            //the next two lines are just to prove the thing of one hour
+                            //.startedAt(LocalDateTime.now().minusHours(2))
+                            //.startedAt(LocalDateTime.now())
                             .level(Level.INITIAL.name())
                             .build();
 
@@ -170,6 +174,43 @@ public class MongoRepositoryAdapterQuiz implements QuizRepositoryGateway {
                     return this.quizRepository.save(mapper.map(quiz1, QuizData.class));
                 })
                 .map(quiz2 -> mapper.map(quiz2, Quiz.class));
+    }
+
+    @Override
+    public Mono<Quiz> submitQuiz(String id, Quiz quiz) {
+        return this.quizRepository
+                .findById(id)
+                .switchIfEmpty(Mono.error(new IllegalArgumentException("There is not " +
+                        "quiz with id: " + id)))
+                .flatMap(quizData -> {
+                    LocalDateTime now = LocalDateTime.now();
+                    Duration duration = Duration.between(quizData.getStartedAt(), now);
+                    long hours = duration.toHours();
+                    if (hours > 1){
+                        return this.quizRepository.deleteById(id)
+                                .then(Mono.error(new IllegalArgumentException("The quiz can no longer be submitted, " +
+                                        "you spend more than 1 hour on it.")));
+                    }else{
+                        quiz.setId(quizData.getId());
+                        Double newResult = quiz.getQuestions().entrySet()
+                                .stream()
+                                .mapToDouble(entry -> entry.getValue() ? 2 : 0)
+                                .sum();
+                        quiz.setScore(newResult);
+                        quiz.setStatus(Status.FINISHED.name());
+                        return quizRepository.save(mapper.map(quiz, QuizData.class));
+                    }
+                })
+                .map(quizData -> mapper.map(quizData, Quiz.class));
+    }
+
+    @Override
+    public Mono<Void> deleteQuizById(String id) {
+        return this.quizRepository
+                .findById(id)
+                .switchIfEmpty(Mono.error(new IllegalArgumentException("There is not " +
+                        "quiz with id: " + id)))
+                .flatMap(studentData -> this.quizRepository.deleteById(studentData.getId()));
     }
 
     @Override
