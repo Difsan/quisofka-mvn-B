@@ -1,7 +1,6 @@
 package co.com.quisofka.quizzes.domain.usecase.quiz.deletebyid;
 
 import co.com.quisofka.quizzes.domain.model.quiz.gateways.QuizRepositoryGateway;
-import co.com.quisofka.quizzes.domain.usecase.quiz.getQuizById.GetQuizByIdUseCase;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -11,8 +10,6 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(MockitoExtension.class)
 class DeleteQuizByIdUseCaseTest {
@@ -34,7 +31,7 @@ class DeleteQuizByIdUseCaseTest {
 
         Mockito.when(repository.deleteQuizById(quizId)).thenReturn(Mono.empty());
 
-        var result = repository.deleteQuizById(quizId);
+        var result = useCase.apply(quizId);
 
         StepVerifier.create(result)
                 .expectNext()
@@ -53,7 +50,7 @@ class DeleteQuizByIdUseCaseTest {
                 .thenReturn(Mono.error(new IllegalArgumentException("There is not " +
                 "quiz with id: " + quizId)));
 
-        var result = repository.deleteQuizById(quizId);
+        var result = useCase.apply(quizId);
 
         StepVerifier.create(result)
                 .expectErrorMessage("There is not " +

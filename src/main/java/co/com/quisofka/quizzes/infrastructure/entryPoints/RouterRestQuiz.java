@@ -12,9 +12,6 @@ import co.com.quisofka.quizzes.domain.usecase.quiz.deletebyid.DeleteQuizByIdUseC
 import co.com.quisofka.quizzes.domain.usecase.quiz.getAllQuizzes.GetAllQuizzesUseCase;
 import co.com.quisofka.quizzes.domain.usecase.quiz.getQuizById.GetQuizByIdUseCase;
 import co.com.quisofka.quizzes.domain.usecase.quiz.submitquiz.SubmitQuizUseCase;
-import co.com.quisofka.quizzes.domain.usecase.student.deletestudent.DeleteStudentUseCase;
-import co.com.quisofka.quizzes.domain.usecase.student.getstudentbyid.GetStudentByIdUseCase;
-import co.com.quisofka.quizzes.domain.usecase.student.updatestudent.UpdateStudentUseCase;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
@@ -30,7 +27,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.reactive.function.BodyInserters;
-import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.server.RouterFunction;
 import org.springframework.web.reactive.function.server.ServerResponse;
 import reactor.core.publisher.Mono;
@@ -117,16 +113,6 @@ public class RouterRestQuiz {
                                 .onErrorResume(throwable -> ServerResponse.status(HttpStatus.NOT_ACCEPTABLE).bodyValue(throwable.getMessage()))));
     }
 
-    @Bean
-    public RouterFunction<ServerResponse> createFirstlvlQuiz(CreateFirstLvlQuizUseCase createFirstLvlQuizUseCase) {
-        return route(POST("/quisofka/quizzes/quizzes/firstlvl").and(accept(MediaType.APPLICATION_JSON)),
-                request -> request.bodyToMono(Quiz.class)
-                        .flatMap(quiz -> createFirstLvlQuizUseCase.apply(quiz)
-                                .flatMap(result -> ServerResponse.status(201)
-                                        .contentType(MediaType.APPLICATION_JSON)
-                                        .bodyValue(result))
-                                .onErrorResume(throwable -> ServerResponse.status(HttpStatus.NOT_ACCEPTABLE).bodyValue(throwable.getMessage()))));
-    }
 
     @Bean
     public RouterFunction<ServerResponse> createSecondLvlQuiz(CreateSecondLvlQuizUseCase createSecondLvlQuizUseCase) {

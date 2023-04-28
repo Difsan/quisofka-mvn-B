@@ -4,7 +4,6 @@ import co.com.quisofka.quizzes.domain.model.question.Question;
 import co.com.quisofka.quizzes.domain.model.quiz.Quiz;
 import co.com.quisofka.quizzes.domain.model.quiz.gateways.QuizRepositoryGateway;
 import co.com.quisofka.quizzes.domain.model.student.Student;
-import co.com.quisofka.quizzes.domain.usecase.quiz.StartQuiz.StartQuizUseCase;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -20,8 +19,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(MockitoExtension.class)
 class CreateQuizUseCaseTest {
@@ -72,7 +69,7 @@ class CreateQuizUseCaseTest {
                 answers2, "Java", "Programación reactiva", "multiple","intermediate" );
 
         // quiz
-        // questions that where contested by the student
+        // questions that were answered by the student
         List<List<Object>> questions = new ArrayList<>(
                 Arrays.asList(
                         Arrays.asList("6449e69a2f0ebe21ed3e0f1d",false),

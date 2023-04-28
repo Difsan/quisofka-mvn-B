@@ -3,7 +3,6 @@ package co.com.quisofka.quizzes.domain.usecase.student.updatestudent;
 
 import co.com.quisofka.quizzes.domain.model.student.Student;
 import co.com.quisofka.quizzes.domain.model.student.gateways.StudentRepository;
-import co.com.quisofka.quizzes.domain.usecase.student.updatestudent.UpdateStudentUseCase;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

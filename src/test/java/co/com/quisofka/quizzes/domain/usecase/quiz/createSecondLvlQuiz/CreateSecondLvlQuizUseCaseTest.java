@@ -1,4 +1,4 @@
-package co.com.quisofka.quizzes.domain.usecase.quiz.createThirdLvlQuiz;
+package co.com.quisofka.quizzes.domain.usecase.quiz.createSecondLvlQuiz;
 
 import co.com.quisofka.quizzes.domain.model.question.Question;
 import co.com.quisofka.quizzes.domain.model.quiz.Quiz;
@@ -22,26 +22,27 @@ import java.util.List;
 
 
 @ExtendWith(MockitoExtension.class)
-class CreateThirdvlQuizUseCaseTest {
+class CreateSecondLvlQuizUseCaseTest {
 
     @Mock
     QuizRepositoryGateway repository;
 
-    CreateThirdvlQuizUseCase useCase;
+    CreateSecondLvlQuizUseCase useCase;
 
     @BeforeEach
     void setUp() {
-        useCase = new CreateThirdvlQuizUseCase(repository);
+        useCase = new CreateSecondLvlQuizUseCase(repository);
     }
 
+
     @Test
-    @DisplayName("CreateThirdLvlQuizUseCase_Success")
-    void createThirdLvlQuiz(){
+    @DisplayName("CreateSecondLvlQuizUseCase_Success")
+    void createSecondLvlQuiz(){
 
         String studentId = "1";
 
         var student = new Student(studentId, "Diego", "Sanchez",
-                "di@gmail.com",false,"BASIC");
+                "di@gmail.com",true,"INITIAL");
 
         Quiz requestQuiz = new Quiz(null,null,null,null,
                 studentId,null,null,null,null);
@@ -49,37 +50,35 @@ class CreateThirdvlQuizUseCaseTest {
         //Answers to be included in each question
         List<List<Object>> answers1 = new ArrayList<>(
                 Arrays.asList(
-                        Arrays.asList("Se basa en el uso de flujos de datos",true),
-                        Arrays.asList("Requiere el uso de hilos de ejecución", false),
-                        Arrays.asList("Permite manejar grandes volúmenes de datos", true),
-                        Arrays.asList("Es una técnica obsoleta y poco utilizada", false)
+                        Arrays.asList("Verdadero",true),
+                        Arrays.asList("Falso", false)
                 )
 
         );
         List<List<Object>> answers2 = new ArrayList<>(
                 Arrays.asList(
-                        Arrays.asList("map",true),
-                        Arrays.asList("filter", true),
-                        Arrays.asList("reduce", true),
-                        Arrays.asList("merge", false))
+                        Arrays.asList("Un lenguaje de programación que se utiliza para crear páginas web dinámicas",false),
+                        Arrays.asList("Una base de datos que se utiliza para almacenar información de una aplicación web", false),
+                        Arrays.asList("Un modelo de objetos que representa la estructura de una página web", true),
+                        Arrays.asList("Una biblioteca de funciones que se utiliza para manipular datos en una aplicación web", false))
 
         );
 
         //create the questions
-        Question question1 = new Question("6449e69a2f0ebe21ed3e0f1d",
-                "¿Cuál(es) de las siguientes afirmaciones son verdaderas sobre programación reactiva en Java?",
-                answers1,"Java", "Programación reactiva", "multiple", "INTERMEDIATE");
+        Question question1 = new Question("644adbf2f396e447be1a49c8",
+                "Angular utiliza TypeScript como lenguaje de programación",
+                answers1,"Javascript", "Angular", "truefalse", "BASIC");
 
-        Question question2 = new Question("6449e6762f0ebe21ed3e0f12",
-                "¿Cuál(es) de los siguientes son operadores de transformación en programación reactiva en Java?",
-                answers2, "Java", "Programación reactiva", "multiple","INTERMEDIATE" );
+        Question question2 = new Question("644adbf2f396e447be1a49f4",
+                "¿Qué es el DOM en JavaScript?",
+                answers2, "Javascript", "DOM", "single","BASIC");
 
         // quiz
         // questions that were answered by the student
         List<List<Object>> questions = new ArrayList<>(
                 Arrays.asList(
-                        Arrays.asList("6449e69a2f0ebe21ed3e0f1d",false),
-                        Arrays.asList("6449e6762f0ebe21ed3e0f12",false)
+                        Arrays.asList("644adbf2f396e447be1a49c8",false),
+                        Arrays.asList("644adbf2f396e447be1a49f4",false)
                 )
         );
 
@@ -90,11 +89,11 @@ class CreateThirdvlQuizUseCaseTest {
         }};
 
         //create quiz
-        Quiz createdQuiz = new Quiz("APOS-4587", questions, questionList,null,"1",
+        Quiz createdQuiz = new Quiz("APOS-4587", questions, questionList,null,studentId,
                 LocalDateTime.now(),null, "GENERATED",
-                "INTERMEDIATE");
+                "BASIC");
 
-        Mockito.when(repository.createThirdLvlQuiz(requestQuiz)).thenReturn(Mono.just(createdQuiz));
+        Mockito.when(repository.createSecondLvlQuiz(requestQuiz)).thenReturn(Mono.just(createdQuiz));
 
         var result = useCase.apply(requestQuiz);
 
@@ -103,7 +102,8 @@ class CreateThirdvlQuizUseCaseTest {
                 .expectComplete()
                 .verify();
 
-        Mockito.verify(repository, Mockito.times(1)).createThirdLvlQuiz(requestQuiz);
+        Mockito.verify(repository, Mockito.times(1)).createSecondLvlQuiz(requestQuiz);
 
     }
+
 }

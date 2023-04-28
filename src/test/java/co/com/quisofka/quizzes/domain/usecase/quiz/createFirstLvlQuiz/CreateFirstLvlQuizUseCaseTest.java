@@ -4,7 +4,6 @@ import co.com.quisofka.quizzes.domain.model.question.Question;
 import co.com.quisofka.quizzes.domain.model.quiz.Quiz;
 import co.com.quisofka.quizzes.domain.model.quiz.gateways.QuizRepositoryGateway;
 import co.com.quisofka.quizzes.domain.model.student.Student;
-import co.com.quisofka.quizzes.domain.usecase.quiz.StartQuiz.StartQuizUseCase;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -21,7 +20,6 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(MockitoExtension.class)
 class CreateFirstLvlQuizUseCaseTest {
