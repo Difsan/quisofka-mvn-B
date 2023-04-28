@@ -66,6 +66,13 @@ public class AdapterEmail implements EmailReposiroty {
 
         return Mono.fromRunnable(() -> {
             try {
+
+                if (!quizResult.matches("^(0|[1-9]|[12]\\d|30)$")) {
+
+                    throw new Exception ("Quiz result is invalid. An integer between 0 and 30 is expected.");
+
+                }
+
                 // Load the HTML template from the classpath
                 System.out.println("entrando a sendHtmlEmail");
                 Resource resource = new ClassPathResource("templates/resultSentEmail-Template.html");
