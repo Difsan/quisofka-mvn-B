@@ -3,7 +3,6 @@ package co.com.quisofka.quizzes.domain.usecase.quiz.submitquiz;
 import co.com.quisofka.quizzes.domain.model.question.Question;
 import co.com.quisofka.quizzes.domain.model.quiz.Quiz;
 import co.com.quisofka.quizzes.domain.model.quiz.gateways.QuizRepositoryGateway;
-import co.com.quisofka.quizzes.domain.usecase.student.updatestudent.UpdateStudentUseCase;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -17,7 +16,6 @@ import reactor.test.StepVerifier;
 import java.time.LocalDateTime;
 import java.util.*;
 
-import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(MockitoExtension.class)
 class SubmitQuizUseCaseTest {
@@ -85,7 +83,7 @@ class SubmitQuizUseCaseTest {
                 "BASIC");
 
         //updated quiz, 1 answer right
-        // questions that where contested by the student
+        // questions that were answered by the student
         List<List<Object>> updatequestions = new ArrayList<>(
                 Arrays.asList(
                         Arrays.asList("6449e69a2f0ebe21ed3e0f1d",true),

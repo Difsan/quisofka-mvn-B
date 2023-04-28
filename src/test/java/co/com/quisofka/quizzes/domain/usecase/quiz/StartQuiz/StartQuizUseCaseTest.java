@@ -3,7 +3,6 @@ package co.com.quisofka.quizzes.domain.usecase.quiz.StartQuiz;
 import co.com.quisofka.quizzes.domain.model.question.Question;
 import co.com.quisofka.quizzes.domain.model.quiz.Quiz;
 import co.com.quisofka.quizzes.domain.model.quiz.gateways.QuizRepositoryGateway;
-import co.com.quisofka.quizzes.domain.usecase.quiz.deletebyid.DeleteQuizByIdUseCase;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -67,7 +66,7 @@ class StartQuizUseCaseTest {
                 answers2, "Java", "Programación reactiva", "multiple","intermediate" );
 
         // quiz
-        // questions that where contested by the student
+        // questions that were answered by the student
         List<List<Object>> questions = new ArrayList<>(
                 Arrays.asList(
                         Arrays.asList("6449e69a2f0ebe21ed3e0f1d",false),
