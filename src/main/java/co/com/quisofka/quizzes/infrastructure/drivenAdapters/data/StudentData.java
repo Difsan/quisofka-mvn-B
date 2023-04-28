@@ -5,6 +5,7 @@ import co.com.quisofka.quizzes.infrastructure.drivenAdapters.util.validators.Lev
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
@@ -24,15 +25,17 @@ public class StudentData {
 
     @NotNull(message = "Name can't be null")
     @NotBlank(message = "Name can't be empty")
+    @Pattern(regexp = "^[a-zA-Z]+$", message = "Name must contain only letters")
     private String name;
 
     @NotNull(message = "LastName can't be null")
     @NotBlank(message = "LastName can't be empty")
+    @Pattern(regexp = "^[a-zA-Z]+$", message = "LastName must contain only letters")
     private String lastName;
 
     @NotNull(message = "Email can't be null")
     @NotBlank(message = "Email can't be empty")
-    @Email(message = "Invalid email address")
+    @Pattern(regexp = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$", message = "Invalid email address format")
     @Indexed(unique = true)
     private String email;
 
