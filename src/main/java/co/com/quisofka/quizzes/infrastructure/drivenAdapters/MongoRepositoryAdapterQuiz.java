@@ -3,9 +3,10 @@ package co.com.quisofka.quizzes.infrastructure.drivenAdapters;
 
 import co.com.quisofka.quizzes.domain.model.question.Question;
 import co.com.quisofka.quizzes.domain.model.quiz.Quiz;
-import co.com.quisofka.quizzes.domain.model.quiz.enums.Level;
+import co.com.quisofka.quizzes.domain.model.student.enums.Level;
 import co.com.quisofka.quizzes.domain.model.quiz.enums.Status;
 import co.com.quisofka.quizzes.domain.model.quiz.gateways.QuizRepositoryGateway;
+import co.com.quisofka.quizzes.domain.model.student.Student;
 import co.com.quisofka.quizzes.infrastructure.drivenAdapters.data.QuizData;
 import co.com.quisofka.quizzes.infrastructure.drivenAdapters.util.customCode.CustomUUID;
 import lombok.RequiredArgsConstructor;
@@ -248,12 +249,40 @@ public class MongoRepositoryAdapterQuiz implements QuizRepositoryGateway {
                                     .sum();
                             quiz.setScore(newResult);
                             quiz.setStatus(Status.FINISHED.name());
+                            System.out.println("student operation");
+
+                            this.studentRepository.findById(quiz.getStudentId())
+                                    .switchIfEmpty(Mono.error( new Throwable("Student not found")))
+                                    .map(studentData -> {
+                                        if (quiz.getScore() < 26) {
+                                            studentData.setIsAuthorized(false);
+                                            this.studentRepository.save(studentData).subscribe();
+                                        }
+
+                                        System.out.println("student operation");
+
+                                        if (quiz.getScore() >= 26) {
+                                            switch (studentData.getLevel().toUpperCase()) {
+                                                case "PENDING" -> studentData.setLevel(Level.INITIAL.name());
+                                                case "INITIAL" -> studentData.setLevel(Level.BASIC.name());
+                                                case "BASIC" -> studentData.setLevel(Level.INTERMEDIATE.name());
+                                            }
+                                            this.studentRepository.save(studentData).subscribe();
+                                        }
+                                        return studentData;
+                                    }).subscribe();
                             return quizRepository.save(mapper.map(quiz, QuizData.class));
                         }
                     }
                 })
                 .map(quizData -> mapper.map(quizData, Quiz.class));
     }
+
+
+
+
+
+
 
     @Override
     public Mono<Void> deleteQuizById(String id) {

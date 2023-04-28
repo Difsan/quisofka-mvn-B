@@ -1,0 +1,31 @@
+[
+  {
+    "name": "Julian",
+    "lastName": "Rojas",
+    "email": "kotch.95@gmail.com",
+    "level": "PENDING",
+    "isAuthorized": true
+  },
+  {
+    "name": "Diego",
+    "lastName": "Sanchez",
+    "email": "difsanchezru@gmail.com",
+    "level": "BASIC",
+    "isAuthorized": true
+  },
+  {
+    "name": "Jonathan",
+    "lastName": "Pinilla",
+    "email": "jonathan_pinilla@outlook.com",
+    "level": "INTERMEDIATE",
+    "isAuthorized": true
+  },
+  {
+    "name": "Juan",
+    "lastName": "Correa",
+    "email": "juangmcv@outlook.com",
+    "level": "BASIC",
+    "isAuthorized": false
+  }
+
+]
