@@ -2,7 +2,6 @@ package co.com.quisofka.quizzes.domain.usecase.email.sendstudentresultbyemail;
 
 import co.com.quisofka.quizzes.domain.model.email.Email;
 import co.com.quisofka.quizzes.domain.model.email.gateways.EmailReposiroty;
-import co.com.quisofka.quizzes.domain.usecase.email.sendquizbyemail.SendQuizCodeByEmailUseCase;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -13,7 +12,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
-import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(MockitoExtension.class)
 class SendStudentResultByEmailUseCaseTest {

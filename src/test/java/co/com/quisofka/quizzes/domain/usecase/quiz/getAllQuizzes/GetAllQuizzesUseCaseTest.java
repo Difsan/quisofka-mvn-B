@@ -3,7 +3,6 @@ package co.com.quisofka.quizzes.domain.usecase.quiz.getAllQuizzes;
 import co.com.quisofka.quizzes.domain.model.question.Question;
 import co.com.quisofka.quizzes.domain.model.quiz.Quiz;
 import co.com.quisofka.quizzes.domain.model.quiz.gateways.QuizRepositoryGateway;
-import co.com.quisofka.quizzes.domain.usecase.quiz.getQuizById.GetQuizByIdUseCase;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -12,17 +11,14 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
-import java.net.HttpURLConnection;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(MockitoExtension.class)
 class GetAllQuizzesUseCaseTest {
@@ -70,7 +66,7 @@ class GetAllQuizzesUseCaseTest {
                 answers2, "Java", "Programación reactiva", "multiple","intermediate" );
 
         // quiz
-        // questions that where contested by the student
+        // questions that were answered by the student
         List<List<Object>> questions = new ArrayList<>(
                 Arrays.asList(
                         Arrays.asList("6449e69a2f0ebe21ed3e0f1d",false),
